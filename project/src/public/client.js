@@ -1,7 +1,5 @@
 let store = Immutable.Map({
-  user: Immutable.Map({
-    name: "Student",
-  }),
+  selectedRover: null,
   rovers: [],
 });
 
@@ -19,92 +17,75 @@ const render = async (rootElement, state) => {
 
 // create content
 const App = (state) => {
-  let { rovers } = state;
-
+  let rovers = state.get("rovers");
+  let selectedRover = state.get("selectedRover");
+  console.log("rovers", rovers);
+  console.log("selectedRover", selectedRover);
   return `
-        <header></header>
-        <main>
-            ${Greeting(store.getIn(["user", "name"]))}
-            <div class="container mt-5">
-              <div class="row">
-                <div class="col-sm-4">
-                  <h3>Column 1</h3>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-                  <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+        <div class="bg-white py-24 sm:py-32">
+            <div class="mx-auto grid max-w-7xl gap-x-8 gap-y-20 px-6 lg:px-8 xl:grid-cols-2">
+                <div class="max-w-2xl">
+                    <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Mars Dashboard</h2>
                 </div>
-                <div class="col-sm-4">
-                  <h3>Column 2</h3>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-                  <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-                </div>
-                <div class="col-sm-4">
-                  <h3>Column 3</h3>        
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-                  <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-                </div>
-              </div>
+                ${rovers.length > 0 ? renderRoversHtml(rovers) : 'Loading...'}
             </div>
-        </main>
-        <footer></footer>
+        </div>
     `;
 };
 
 // listening for load event because page should load before any JS is called
-window.addEventListener("load", () => {
+window.addEventListener("load", async () => {
   render(root, store);
+  await getRovers((data) => {
+    updateStore(store.set("rovers", data.images.rovers));
+  });
 });
 
-// ------------------------------------------------------  COMPONENTS
+const renderRoversHtml = (rovers) => {
 
-// Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
-const Greeting = (name) => {
-  if (name) {
-    return `
-            <h1>Welcome, ${name}!</h1>
-        `;
-  }
+    return `<ul role="list" class="grid gap-x-8 gap-y-12 sm:grid-cols-2 sm:gap-y-16 xl:col-span-2">
+            ${rovers.map(rover => renderReverHtml(rover)).join("")}
+        </ul>`
+}
 
-  return `
-        <h1>Hello!</h1>
-    `;
-};
+const renderReverHtml = (rover) => {
+    const {name, launch_date, landing_date, status} = rover;
+    return `<li>
+            <figure class="md:flex bg-slate-100 rounded-xl p-8 md:p-0 dark:bg-slate-800">
+                <button>
+                <div class="pt-6 md:p-8 text-center md:text-left space-y-4">
+                    <figcaption class="font-medium">
+                        <div class="text-sky-500 dark:text-sky-400">
+                            Name: ${name}
+                        </div>
+                        <div class="text-slate-700 dark:text-slate-500">
+                            Launch date: ${launch_date}
+                        </div>
+                         <div class="text-slate-700 dark:text-slate-500">
+                            Landing date: ${landing_date}
+                        </div>
+                         <div class="text-slate-700 dark:text-slate-500">
+                            Status: ${status}
+                        </div>
+                    </figcaption>
+                </div>
+            </figure>
+        </li>`
+}
 
-// Example of a pure function that renders infomation requested from the backend
-const ImageOfTheDay = (apod) => {
-  // If image does not already exist, or it is not from today -- request it again
-  const today = new Date();
-  const photodate = new Date(apod.date);
-  console.log(photodate.getDate(), today.getDate());
-
-  console.log(photodate.getDate() === today.getDate());
-  if (!apod || apod.date === today.getDate()) {
-    getImageOfTheDay(store);
-  }
-
-  // check if the photo of the day is actually type video!
-  if (apod.media_type === "video") {
-    return `
-            <p>See today's featured video <a href="${apod.url}">here</a></p>
-            <p>${apod.title}</p>
-            <p>${apod.explanation}</p>
-        `;
-  } else {
-    return `
-            <img src="${apod.image.url}" height="350px" width="100%" />
-            <p>${apod.image.explanation}</p>
-        `;
-  }
-};
-
-// ------------------------------------------------------  API CALLS
-
-// Example API call
-const getImageOfTheDay = (state) => {
-  let { apod } = state;
-
-  getRovers((data) => console.log("rover list", data));
-  getRoverByName("Spirit", (data) => console.log("rover details", data));
-};
+// const renderReverHtml = (rover) => {
+//     const {name, launch_date, landing_date, status} = rover;
+//     return `<li>
+//             <div class="flex items-center gap-x-6">
+//                 <div>
+//                     <h3 class="text-base font-semibold leading-7 tracking-tight text-gray-900">Name: ${name}</h3>
+//                     <p class="text-sm font-semibold leading-6 text-indigo-600">Launch date: ${launch_date}</p>
+//                     <p class="text-sm font-semibold leading-6 text-indigo-600">Landing date: ${landing_date}</p>
+//                     <p class="text-sm font-semibold leading-6 text-indigo-600">Status: ${status}</p>
+//                 </div>
+//             </div>
+//         </li>`
+// }
 
 const getRovers = (callback) => {
   fetch("http://localhost:3000/rovers")

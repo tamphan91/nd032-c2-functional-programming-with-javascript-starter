@@ -28,7 +28,7 @@ app.get("/rovers", async (req, res) => {
 app.get("/rovers/:name", async (req, res) => {
   try {
     let images = await fetch(
-      `${process.env.MARS_ROVERS_API_URL}/${req.params.name}/photos?sol=1000&api_key=${process.env.API_KEY}`
+      `${process.env.MARS_ROVERS_API_URL}/${req.params.name}/photos?earth_date=2024-1-1&page=1&api_key=${process.env.API_KEY}`
     ).then((res) => res.json());
     res.send({ images });
   } catch (err) {
