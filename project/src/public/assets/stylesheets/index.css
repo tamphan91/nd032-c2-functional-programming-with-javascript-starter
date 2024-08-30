@@ -23,16 +23,25 @@ footer {
 /* -------------------  TABLET  --------------------- */
 @media (min-width: 768px) {
   /* use mobile */
+  button.img-btn, p.dashboard {
+    color: red;
+  }
 }
 
 /* -------------------  DESKTOP  -------------------- */
 
 @media (min-width: 1224px) {
   /* use mobile */
+  button.img-btn, p.dashboard {
+    color: blue;
+  }
 }
 
 /* -------------------  LARGE SCREENS  -------------- */
 
 @media (min-width: 1824px) {
   /* use mobile */
+  button.img-btn, p.dashboard {
+    color: green;
+  }
 }

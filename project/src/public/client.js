@@ -27,7 +27,7 @@ const App = (state) => {
         <div class="bg-white py-24 sm:py-32">
             <div class="mx-auto grid max-w-7xl gap-x-8 gap-y-10 px-6 lg:px-8">
                 <div class="col-span-2 grid gap-y-10">
-                    <p class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl text-center">Mars Dashboard</p>
+                    <p class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl text-center dashboard">Mars Dashboard</p>
                     <p class="text-1xl font-bold tracking-tight text-gray-500 sm:text-2xl">${
                       selectedRover ? "Images" : "Rover List"
                     }</p>
@@ -78,7 +78,7 @@ const renderRoverHtml = (rover) => {
                          <div class="text-slate-700 dark:text-slate-500">
                             Status: ${status}
                         </div>
-                        <button onclick="handleShowImages('${name}')" class="bg-cyan-500 shadow-lg shadow-cyan-500/50 rounded-lg p-2 mt-4">Images</button>
+                        <button onclick="handleShowImages('${name}')" class="img-btn bg-cyan-500 shadow-lg shadow-cyan-500/50 rounded-lg p-2 mt-4">Images</button>
                     </figcaption>
                 </div>
             </figure>
@@ -88,7 +88,7 @@ const renderRoverHtml = (rover) => {
 const renderPhotosHtml = (photos) => {
 
   return `
-        <div class"flex flex-col">
+        <div class="col-span-2">
           <button onclick="handleBackToRover()" class="bg-cyan-500 shadow-lg shadow-cyan-500/50 rounded-lg p-2 m-4">Back to rover list</button>
           ${renderListHtml(photos, renderPhotoHtml)}
           ${photos.length === 0 ? 'No photo found!' : ''}
